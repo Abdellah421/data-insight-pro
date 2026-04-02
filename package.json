@@ -23,11 +23,7 @@
     "react-dom": "^18.3.1",
     "react-dropzone": "^14.2.3",
     "react-table": "^7.8.0",
-    "xlsx": "^0.18.5",
-    "ml-matrix": "^6.10.4",
-    "ml-regression": "^5.0.0",
-    "ml-clustering": "^2.1.0",
-    "ml-stat": "^2.0.0"
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.1",
