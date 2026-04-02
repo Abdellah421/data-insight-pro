@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { RefreshCw, ArrowRight, CheckCircle, AlertCircle } from 'lucide-react';
+import { RefreshCw, ArrowRight, CheckCircle } from 'lucide-react';
 import { Dataset, DataTransformation } from '../types';
 
 interface DataTransformationProps {

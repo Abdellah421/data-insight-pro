@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { BarChart2, PieChart, Gauge, TrendingUp, AlertCircle } from 'lucide-react';
 import { Dataset, AnalysisResult } from '../types';
-import StatsCard from '../components/StatsCard';
 import CorrelationHeatmap from '../components/CorrelationHeatmap';
-import { Bar, Pie, Scatter } from 'react-chartjs-2';
+import { Bar, Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -76,7 +75,7 @@ const DataAnalysis: React.FC<DataAnalysisProps> = ({ dataset }) => {
         stats.mean = values.reduce((sum, val) => sum + val, 0) / values.length;
         
         // Sort values for median
-        const sortedValues = [...values].sort((a, b) => a - b);
+        const sortedValues = [...values].sort((a: any, b: any) => a - b);
         const mid = Math.floor(sortedValues.length / 2);
         stats.median = sortedValues.length % 2 === 0
           ? (sortedValues[mid - 1] + sortedValues[mid]) / 2
@@ -151,7 +150,7 @@ const DataAnalysis: React.FC<DataAnalysisProps> = ({ dataset }) => {
           };
         })
         .filter(Boolean)
-        .sort((a, b) => b.strength - a.strength);
+        .sort((a: any, b: any) => b.strength - a.strength);
       
       // Create an analysis result
       const result: AnalysisResult = {
@@ -407,7 +406,7 @@ const DataAnalysis: React.FC<DataAnalysisProps> = ({ dataset }) => {
     if (data.columnType === 'number') {
       // Render histogram for numeric data
       const chartData = {
-        labels: data.binRanges.map((range: any, i: number) => 
+        labels: data.binRanges.map((range: any) => 
           `${range.start.toFixed(1)} - ${range.end.toFixed(1)}`
         ),
         datasets: [

@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Dataset, DIPProject, ProjectState, MLResultEntry } from '../types';
+import { DIPProject, ProjectState } from '../types';
 
 // ── Dataset Export ────────────────────────────────────────────────────────────
 
@@ -12,7 +12,6 @@ import { Dataset, DIPProject, ProjectState, MLResultEntry } from '../types';
  */
 export function exportDataset(
   rows: any[],
-  columns: { name: string }[],
   format: 'csv' | 'xlsx' | 'json',
   projectName: string
 ): void {
@@ -43,19 +42,26 @@ export function exportDataset(
  * Serialize and download the full project as a .dip file.
  */
 export function saveProject(state: ProjectState): void {
+  const activeDataset = state.activeDatasetId ? state.datasets[state.activeDatasetId] : null;
+  
   const dipProject: DIPProject = {
-    schemaVersion: '1.0',
+    schemaVersion: '2.0',
     projectName: state.projectName,
-    originalDataset: state.originalDataset,
-    processedDataset: state.processedDataset,
+    datasets: state.datasets,
+    activeDatasetId: state.activeDatasetId,
+    originalDataset: activeDataset,
+    processedDataset: activeDataset,
     history: state.history,
     charts: state.charts,
     analysisResults: state.analysisResults,
     mlResults: state.mlResults,
+    insights: state.insights,
     exportSettings: state.exportSettings,
     createdAt: new Date().toISOString(),
     lastModified: new Date().toISOString(),
     versions: state.versions,
+    workflowHistory: state.workflowHistory,
+    datasetVersions: state.datasetVersions,
   };
 
   const safeName = (state.projectName || 'project').replace(/[^a-zA-Z0-9_-]/g, '_');
@@ -120,8 +126,10 @@ export function generatePDFReport(
   let y = 55;
 
   // ── Dataset Summary ──
-  if (state.processedDataset) {
-    const ds = state.processedDataset;
+  const activeDataset = state.activeDatasetId ? state.datasets[state.activeDatasetId] : null;
+  
+  if (activeDataset) {
+    const ds = activeDataset;
     doc.setTextColor(30, 30, 30);
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
@@ -150,7 +158,7 @@ export function generatePDFReport(
     doc.text('Column Details', margin, y);
     y += 4;
 
-    const colRows = ds.columns.slice(0, 20).map((col) => [
+    const colRows = ds.columns.slice(0, 20).map((col: any) => [
       col.name,
       col.type,
       col.missing != null ? col.missing.toString() : '0',

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChevronLeft, ChevronRight, Save, FolderOpen, History, Clock, Edit2, Check, Lightbulb, Brain, Database, Plus, Trash2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Save, FolderOpen, History, Clock, Edit2, Check, Lightbulb } from 'lucide-react';
 import { useProject } from '../context/ProjectContext';
 import { useToast } from '../context/ToastContext';
 import { saveProject } from '../utils/exporters';

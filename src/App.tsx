@@ -1,7 +1,7 @@
 import React, { useState, Suspense } from 'react';
 import {
   Menu, BarChart4, Database, FileCode, Settings, Brain, Calculator,
-  RefreshCw, Download, FileSpreadsheet, FileText, FileJson, FileBarChart2, Zap, Code
+  RefreshCw, FileSpreadsheet, FileText, FileJson, FileBarChart2, Zap, Code
 } from 'lucide-react';
 import Sidebar from './components/Sidebar';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -88,7 +88,7 @@ function AppInner() {
       return;
     }
     try {
-      exportDataset(currentDataset.rows, currentDataset.columns, format, state.projectName);
+      exportDataset(currentDataset.rows, format, state.projectName);
       showToast(`Dataset exported as ${format.toUpperCase()}!`, 'success');
     } catch (err: any) {
       showToast(`Export failed: ${err?.message}`, 'error');
@@ -187,7 +187,7 @@ function AppInner() {
                 </button>
                </div>
 
-              <button onClick={() => isPro ? setShowCodeModal(true) : showToast('Python Export is a Pro feature.', 'error')} title="Export Python Code" className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 text-gray-100 rounded-lg text-xs font-semibold hover:bg-black transition-colors shadow-sm">
+              <button onClick={() => setShowCodeModal(true)} title="Export Python Code" className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 text-gray-100 rounded-lg text-xs font-semibold hover:bg-black transition-colors shadow-sm">
                 <Code size={14} /> <span className="hidden sm:inline">Export Code</span>
               </button>
               <button onClick={handlePDFReport} title="Export PDF Report" className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm">

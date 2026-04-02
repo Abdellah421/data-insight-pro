@@ -1,7 +1,40 @@
-import React, { useState, useMemo } from 'react';
-import { BarChart2, TrendingUp, AlertTriangle, CheckCircle, Target, Calculator } from 'lucide-react';
-import { Dataset, StatisticalTest, DataQualityReport, DataQualityIssue } from '../types';
-import { Bar, Scatter } from 'react-chartjs-2';
+import React, { useState } from 'react';
+import { BarChart2, AlertTriangle, CheckCircle, Calculator } from 'lucide-react';
+import { Dataset } from '../types';
+import { Bar } from 'react-chartjs-2';
+
+export interface StatisticalTest {
+  id: string;
+  type: string;
+  groups: string[];
+  significance: number;
+  pValue: number;
+  result: string;
+  effectSize?: number;
+  testStatistic: number;
+  degreesOfFreedom?: number;
+}
+
+export interface DataQualityIssue {
+  type: string;
+  column: string;
+  severity: string;
+  count: number;
+  description: string;
+  suggestion: string;
+}
+
+export interface DataQualityReport {
+  id: string;
+  completeness: number;
+  accuracy: number;
+  consistency: number;
+  validity: number;
+  uniqueness: number;
+  overallScore: number;
+  issues: DataQualityIssue[];
+  recommendations: string[];
+}
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -41,9 +74,7 @@ const AdvancedAnalytics: React.FC<AdvancedAnalyticsProps> = ({ dataset }) => {
     .filter(col => col.type === 'number')
     .map(col => col.name);
   
-  const categoricalColumns = dataset.columns
-    .filter(col => col.type === 'string' || col.type === 'boolean')
-    .map(col => col.name);
+
   
   // Generate comprehensive data quality report
   const generateDataQualityReport = async () => {
@@ -440,7 +471,7 @@ const AdvancedAnalytics: React.FC<AdvancedAnalyticsProps> = ({ dataset }) => {
             <h3 className="text-lg font-medium text-gray-800 mb-4">Data Quality Issues</h3>
             {report.issues.length > 0 ? (
               <div className="space-y-3">
-                {report.issues.map((issue, index) => (
+                {report.issues.map((issue: any, index: number) => (
                   <div key={index} className={`p-3 rounded-lg ${
                     issue.severity === 'high' ? 'bg-red-50 border border-red-200' :
                     issue.severity === 'medium' ? 'bg-yellow-50 border border-yellow-200' :
@@ -474,7 +505,7 @@ const AdvancedAnalytics: React.FC<AdvancedAnalyticsProps> = ({ dataset }) => {
             <h3 className="text-lg font-medium text-gray-800 mb-4">Recommendations</h3>
             {report.recommendations.length > 0 ? (
               <div className="space-y-3">
-                {report.recommendations.map((recommendation, index) => (
+                {report.recommendations.map((recommendation: any, index: number) => (
                   <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
                     <CheckCircle size={20} className="text-blue-600 mt-0.5 flex-shrink-0" />
                     <p className="text-sm text-blue-800">{recommendation}</p>

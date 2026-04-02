@@ -5,14 +5,10 @@ import {
   Dataset,
   HistoryEntry,
   ChartConfig,
-  AnalysisResult,
-  MLResultEntry,
   DIPProject,
   ProjectVersion,
   ExportSettings,
   WorkflowStep,
-  DatasetVersion,
-  ExplainableInsight,
 } from '../types';
 
 // ── Initial State ─────────────────────────────────────────────────────────────

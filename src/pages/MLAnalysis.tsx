@@ -49,7 +49,7 @@ const MLAnalysis: React.FC<MLAnalysisProps> = ({ dataset }) => {
   const { dispatch } = useProject();
   const { showToast } = useToast();
   const [selectedAnalysis, setSelectedAnalysis] = useState<string>('insights');
-  const [targetColumn, setTargetColumn] = useState<string>('');
+
   const [featureColumns, setFeatureColumns] = useState<string[]>([]);
   const [mlResults, setMlResults] = useState<MLResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -141,13 +141,12 @@ const MLAnalysis: React.FC<MLAnalysisProps> = ({ dataset }) => {
       // Analyze categorical columns
       categoricalColumns.forEach(colName => {
         const values = dataset.rows.map(row => row[colName]).filter(v => v !== null && v !== undefined);
-        const uniqueValues = new Set(values);
         const mostCommon = values.reduce((acc, val) => {
           acc[val] = (acc[val] || 0) + 1;
           return acc;
         }, {} as Record<string, number>);
         
-        const maxCount = Math.max(...Object.values(mostCommon));
+        const maxCount = Math.max(...(Object.values(mostCommon) as number[]));
         const totalCount = values.length;
         const dominance = (maxCount / totalCount) * 100;
         
@@ -371,7 +370,7 @@ const MLAnalysis: React.FC<MLAnalysisProps> = ({ dataset }) => {
             <h4 className="font-medium text-gray-700">Cluster Distribution</h4>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
               {Array.from({ length: data.numClusters }, (_, i) => {
-                const clusterSize = data.clusters.assignments.filter(assignment => assignment === i).length;
+                const clusterSize = data.clusters.assignments.filter((assignment: any) => assignment === i).length;
                 return (
                   <div key={i} className="text-center p-3 bg-gray-50 rounded">
                     <div className="text-2xl font-bold text-blue-600">{clusterSize}</div>
@@ -459,7 +458,7 @@ const MLAnalysis: React.FC<MLAnalysisProps> = ({ dataset }) => {
       <div className="bg-white rounded-lg shadow p-6">
         <h3 className="text-lg font-medium text-gray-800 mb-4">{result.title}</h3>
         <div className="space-y-3">
-          {result.data.insights.map((insight, index) => (
+          {result.data.insights.map((insight: any, index: number) => (
             <div key={index} className="flex items-start space-x-3 p-3 bg-blue-50 rounded-lg">
               <Lightbulb size={20} className="text-blue-600 mt-0.5 flex-shrink-0" />
               <p className="text-sm text-blue-800">{insight}</p>

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Lightbulb, AlertTriangle, Info, CheckCircle, X } from 'lucide-react';
+import { Lightbulb, AlertTriangle, Info, CheckCircle } from 'lucide-react';
 import { useProject } from '../context/ProjectContext';
 
 interface SuggestionsPanelProps {
