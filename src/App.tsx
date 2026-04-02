@@ -129,8 +129,7 @@ function AppInner() {
   ];
 
   return (
-    <div className="flex h-screen bg-background text-gray-300 overflow-hidden relative">
-      <div className="glow-overlay" />
+    <div className="flex h-screen bg-gray-100 overflow-hidden relative">
       <Sidebar
         isOpen={sidebarOpen}
         toggleSidebar={() => setSidebarOpen(!sidebarOpen)}
@@ -142,7 +141,7 @@ function AppInner() {
       />
 
       <div className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <header className="bg-panel/60 backdrop-blur-md border-b border-white/5 z-10 flex-shrink-0">
+        <header className="bg-white shadow-sm z-10 flex-shrink-0">
           <div className="flex items-center justify-between px-4 py-3 gap-4">
             <div className="flex items-center gap-2 min-w-0">
               <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-md text-gray-500 hover:bg-gray-100 flex-shrink-0">
@@ -150,63 +149,65 @@ function AppInner() {
               </button>
               {currentDataset && (
                 <div className="hidden sm:flex items-center gap-2">
-                <span className="text-sm text-gray-500">Workspace /</span>
-                <span className="font-semibold text-sm text-white truncate max-w-[200px]">{currentDataset!.name}</span>
+                  <span className="text-sm text-gray-400">Workspace /</span>
+                  <span className="font-semibold text-sm text-gray-700 truncate max-w-[200px]">{currentDataset.name}</span>
                 </div>
               )}
             </div>
 
             <div className="flex items-center gap-3 flex-shrink-0">
-                <div className="hidden md:flex items-center gap-2 mr-2 border-r border-white/10 pr-3 text-xs text-gray-400">
-                  <span className="font-medium text-gray-300" title={user!.email || 'User'}>{user!.email?.split('@')[0]}</span>
-                  <button onClick={logout} className="text-red-400 hover:text-red-300 font-medium transition-colors">Log out</button>
+              {user && (
+                <div className="hidden md:flex items-center gap-2 mr-2 border-r border-gray-200 pr-3 text-xs text-gray-600">
+                  <span title={user.email || 'User'}>{user.email?.split('@')[0]}</span>
+                  <button onClick={logout} className="text-red-500 hover:text-red-700 font-medium">Log out</button>
                 </div>
+              )}
               
               <button
                 onClick={handleSmartAnalysis}
                 disabled={!currentDataset}
                 title="Auto ML & Smart Profiling"
-                className={`premium-btn py-2 flex items-center gap-1.5 ${
-                  !currentDataset ? 'opacity-30' : ''
+                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-semibold shadow-sm transition-colors ${
+                  currentDataset ? 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200' : 'bg-gray-50 text-gray-400 border border-gray-200 cursor-not-allowed'
                 }`}
               >
-                <Zap size={14} className={currentDataset ? "text-white" : ""} />
+                <Zap size={14} className={currentDataset ? "text-amber-500" : ""} />
                 <span className="hidden md:inline">Smart Analysis</span>
               </button>
 
-              <div className="hidden lg:flex items-center gap-1 bg-white/5 border border-white/10 rounded-xl p-1">
-                <button onClick={() => handleExport('csv')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${currentDataset ? 'text-green-400 hover:bg-green-400/10' : 'text-gray-600 cursor-not-allowed'}`}>
+              <div className="hidden lg:flex items-center gap-1 bg-gray-50 border border-gray-200 rounded-lg p-1">
+                <button onClick={() => handleExport('csv')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${currentDataset ? 'text-green-700 hover:bg-green-100' : 'text-gray-300 cursor-not-allowed'}`}>
                   <FileText size={14} /> CSV
                 </button>
-                <button onClick={() => handleExport('xlsx')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${currentDataset ? 'text-emerald-400 hover:bg-emerald-400/10' : 'text-gray-600 cursor-not-allowed'}`}>
+                <button onClick={() => handleExport('xlsx')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${currentDataset ? 'text-emerald-700 hover:bg-emerald-100' : 'text-gray-300 cursor-not-allowed'}`}>
                   <FileSpreadsheet size={14} /> Excel
                 </button>
-                <button onClick={() => handleExport('json')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${currentDataset ? 'text-blue-400 hover:bg-blue-400/10' : 'text-gray-600 cursor-not-allowed'}`}>
+                <button onClick={() => handleExport('json')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${currentDataset ? 'text-blue-700 hover:bg-blue-100' : 'text-gray-300 cursor-not-allowed'}`}>
                   <FileJson size={14} /> JSON
                 </button>
                </div>
 
-              <button onClick={() => setShowCodeModal(true)} title="Export Python Code" className="premium-btn py-2 bg-gray-800 hover:bg-gray-700">
+              <button onClick={() => setShowCodeModal(true)} title="Export Python Code" className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 text-gray-100 rounded-lg text-xs font-semibold hover:bg-black transition-colors shadow-sm">
                 <Code size={14} /> <span className="hidden sm:inline">Export Code</span>
               </button>
-              <button onClick={handlePDFReport} title="Export PDF Report" className="premium-btn py-2 bg-accent-purple hover:bg-accent-purple/80">
+              <button onClick={handlePDFReport} title="Export PDF Report" className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm">
                 <FileBarChart2 size={14} /> <span className="hidden sm:inline">Report PDF</span>
               </button>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-auto p-4 md:p-6 bg-background relative z-0">
+        <main className="flex-1 overflow-auto p-4 md:p-6 bg-gray-100 relative">
           <ErrorBoundary>
             <Suspense fallback={<div className="flex h-64 items-center justify-center"><svg className="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>}>
               {activeTab === 'upload' && <DataUpload onUploadSuccess={handleUploadSuccess} />}
-              {activeTab === 'explorer' && currentDataset && <DataExplorer dataset={currentDataset!} onDatasetUpdate={handleDatasetUpdate} />}
-              {activeTab === 'cleaning' && currentDataset && <DataCleaning dataset={currentDataset!} onDatasetUpdate={handleDatasetUpdate} />}
-              {activeTab === 'transformation' && currentDataset && <DataTransformationPage dataset={currentDataset!} onDatasetUpdate={handleDatasetUpdate} />}
-              {activeTab === 'analysis' && currentDataset && <DataAnalysis dataset={currentDataset!} />}
-              {activeTab === 'visualization' && currentDataset && <DataVisualization dataset={currentDataset!} />}
-              {activeTab === 'advanced' && currentDataset && <AdvancedAnalytics dataset={currentDataset!} />}
-              {activeTab === 'ml' && currentDataset && <MLAnalysis dataset={currentDataset!} />}
+              {activeTab === 'explorer' && currentDataset && <DataExplorer dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
+              {activeTab === 'cleaning' && currentDataset && <DataCleaning dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
+              {activeTab === 'transformation' && currentDataset && <DataTransformationPage dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
+              {activeTab === 'analysis' && currentDataset && <DataAnalysis dataset={currentDataset} />}
+              {activeTab === 'visualization' && currentDataset && <DataVisualization dataset={currentDataset} />}
+              {activeTab === 'advanced' && currentDataset && <AdvancedAnalytics dataset={currentDataset} />}
+              {activeTab === 'ml' && currentDataset && <MLAnalysis dataset={currentDataset} />}
             </Suspense>
           </ErrorBoundary>
         </main>

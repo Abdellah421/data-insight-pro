@@ -65,35 +65,35 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       <div
-        className={`sidebar-gradient text-gray-400 transition-all duration-300 ease-in-out flex flex-col ${
-          isOpen ? 'w-72' : 'w-20'
+        className={`bg-white shadow-lg transition-all duration-300 ease-in-out flex flex-col ${
+          isOpen ? 'w-64' : 'w-20'
         } relative z-40`}
         style={{ minHeight: '100vh' }}
       >
         {/* Top branding + toggle */}
-        <div className="flex items-center justify-between h-20 px-5 border-b border-white/5 flex-shrink-0">
+        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-100 flex-shrink-0">
           {isOpen && (
             <div className="flex flex-col min-w-0">
-              <span className="text-lg font-bold text-white tracking-tight">DataInsight <span className="text-accent-blue">Pro</span></span>
+              <span className="text-base font-bold text-blue-600 truncate">DataInsight Pro</span>
               {editingName ? (
-                <div className="flex items-center gap-1 mt-1">
+                <div className="flex items-center gap-1 mt-0.5">
                   <input
                     value={nameInput}
                     onChange={(e) => setNameInput(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleNameConfirm()}
-                    className="premium-input text-xs py-1 w-32"
+                    className="text-xs border border-blue-300 rounded px-1 py-0.5 w-28 focus:outline-none focus:ring-1 focus:ring-blue-400"
                     autoFocus
                   />
-                  <button onClick={handleNameConfirm} className="text-green-400 hover:text-green-300">
-                    <Check size={14} />
+                  <button onClick={handleNameConfirm} className="text-green-600 hover:text-green-700">
+                    <Check size={13} />
                   </button>
                 </div>
               ) : (
                 <div className="flex items-center gap-1 mt-0.5">
-                  <span className="text-xs text-gray-500 truncate max-w-[150px]" title={state.projectName}>{state.projectName}</span>
+                  <span className="text-xs text-gray-500 truncate max-w-[130px]" title={state.projectName}>{state.projectName}</span>
                   <button
                     onClick={() => { setNameInput(state.projectName); setEditingName(true); }}
-                    className="text-gray-600 hover:text-gray-400 flex-shrink-0 transition-colors"
+                    className="text-gray-400 hover:text-gray-600 flex-shrink-0"
                   >
                     <Edit2 size={11} />
                   </button>
@@ -103,44 +103,44 @@ const Sidebar: React.FC<SidebarProps> = ({
           )}
           <button
             onClick={toggleSidebar}
-            className="p-2 rounded-xl bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white transition-all flex-shrink-0"
+            className="p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400 flex-shrink-0"
           >
-            {isOpen ? <ChevronLeft size={20} /> : <ChevronRight size={20} />}
+            {isOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
           </button>
         </div>
 
         {/* Project & Panels */}
-        <div className="px-4 py-4 border-b border-white/5 space-y-3 flex-shrink-0">
-          <div className="grid grid-cols-2 gap-2">
+        <div className="px-3 py-3 border-b border-gray-100 space-y-1.5 flex-shrink-0">
+          <div className="grid grid-cols-2 gap-1.5">
             <button
               onClick={handleSaveProject}
               title="Save Project"
-              className="premium-btn py-2 text-[11px]"
+              className="flex items-center justify-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold bg-blue-600 text-white hover:bg-blue-700 transition"
             >
               <Save size={14} /> {isOpen && "Save"}
             </button>
             <button
               onClick={() => setShowLoadModal(true)}
               title="Load Project"
-              className="premium-btn-outline py-2 text-[11px] flex items-center justify-center gap-2"
+              className="flex items-center justify-center gap-2 px-2 py-2 rounded-lg text-xs font-semibold border border-gray-200 text-gray-700 hover:bg-gray-50 transition"
             >
               <FolderOpen size={14} /> {isOpen && "Load"}
             </button>
           </div>
 
           {/* Panels Grid */}
-          <div className="grid grid-cols-3 gap-2">
-             <button onClick={onToggleTimeline} title="Workflow Timeline" className="flex flex-col items-center justify-center p-2.5 rounded-xl border border-white/5 text-gray-500 hover:bg-accent-blue/10 hover:text-accent-blue hover:border-accent-blue/30 transition-all">
-               <Clock size={18} />
-               {isOpen && <span className="text-[9px] uppercase font-bold mt-1.5 truncate">Timeline</span>}
+          <div className="grid grid-cols-3 gap-1.5 mt-2">
+             <button onClick={onToggleTimeline} title="Workflow Timeline" className="flex flex-col items-center justify-center p-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-blue-50 hover:text-blue-600 hover:border-blue-200 transition">
+               <Clock size={16} className="mb-1" />
+               {isOpen && <span className="text-[10px] uppercase truncate">Timeline</span>}
              </button>
-             <button onClick={() => setShowVersions(true)} title="Dataset Versions" className="flex flex-col items-center justify-center p-2.5 rounded-xl border border-white/5 text-gray-500 hover:bg-accent-purple/10 hover:text-accent-purple hover:border-accent-purple/30 transition-all">
-               <History size={18} />
-               {isOpen && <span className="text-[9px] uppercase font-bold mt-1.5 truncate">Versions</span>}
+             <button onClick={() => setShowVersions(true)} title="Dataset Versions" className="flex flex-col items-center justify-center p-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-indigo-50 hover:text-indigo-600 hover:border-indigo-200 transition">
+               <History size={16} className="mb-1" />
+               {isOpen && <span className="text-[10px] uppercase truncate">Versions</span>}
              </button>
-             <button onClick={onToggleSuggestions} title="Smart Suggestions" className="flex flex-col items-center justify-center p-2.5 rounded-xl border border-white/5 text-gray-500 hover:bg-amber-400/10 hover:text-amber-400 hover:border-amber-400/30 transition-all">
-               <Lightbulb size={18} />
-               {isOpen && <span className="text-[9px] uppercase font-bold mt-1.5 truncate">Insights</span>}
+             <button onClick={onToggleSuggestions} title="Smart Suggestions" className="flex flex-col items-center justify-center p-2 rounded-lg text-xs font-medium border border-gray-200 text-gray-600 hover:bg-yellow-50 hover:text-yellow-600 hover:border-yellow-200 transition">
+               <Lightbulb size={16} className="mb-1" />
+               {isOpen && <span className="text-[10px] uppercase truncate">Insights</span>}
              </button>
           </div>
         </div>
@@ -178,12 +178,12 @@ const Sidebar: React.FC<SidebarProps> = ({
                 <button
                   onClick={() => !route.disabled && setActiveTab(route.id)}
                   title={route.name}
-                  className={`w-full flex items-center py-3 px-4 rounded-xl transition-all duration-200 ${
+                  className={`w-full flex items-center py-2.5 px-3 rounded-lg transition-all duration-150 ${
                     activeTab === route.id
-                      ? 'nav-item-active'
+                      ? 'bg-blue-100 text-blue-700 shadow-sm'
                       : route.disabled
-                      ? 'text-gray-700 cursor-not-allowed opacity-50'
-                      : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                      ? 'text-gray-300 cursor-not-allowed'
+                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-800'
                   }`}
                   disabled={route.disabled}
                 >
