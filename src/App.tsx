@@ -37,6 +37,10 @@ function AppInner() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showCodeModal, setShowCodeModal] = useState(false);
 
+  if (!user) {
+    return <AuthModal />;
+  }
+
   const handleUploadSuccess = (dataset: Dataset) => {
     dispatch({ type: 'ADD_DATASET', payload: { id: dataset.id || `ds_${Date.now()}`, dataset, setActive: true } });
     dispatch({
@@ -204,8 +208,6 @@ function AppInner() {
       {showTimeline && <TimelinePanel onClose={() => setShowTimeline(false)} />}
       {showSuggestions && <SuggestionsPanel onClose={() => setShowSuggestions(false)} />}
       {showCodeModal && <PipelineCodeModal onClose={() => setShowCodeModal(false)} />}
-      
-      {!user && <AuthModal />}
     </div>
   );
 }

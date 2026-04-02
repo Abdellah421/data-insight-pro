@@ -10,6 +10,7 @@ export const parseCSV = (file: File): Promise<any[]> => {
       header: true, // First row is header
       dynamicTyping: true, // Convert numbers and booleans
       skipEmptyLines: true,
+      worker: true, // Offload to background web worker to prevent UI freezing
       complete: (results) => {
         if (results.errors.length > 0) {
           reject(new Error(`CSV parsing error: ${results.errors[0].message}`));
