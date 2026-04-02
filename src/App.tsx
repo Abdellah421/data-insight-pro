@@ -27,7 +27,7 @@ const AdvancedAnalytics = React.lazy(() => import('./pages/AdvancedAnalytics'));
 
 // ── Inner App (inside providers) ─────────────────────────────────────────────
 function AppInner() {
-  const { user, logout } = useAuth();
+  const { user, isPro, logout } = useAuth();
   const { state, dispatch, currentDataset } = useProject();
   const { showToast } = useToast();
 
@@ -83,6 +83,10 @@ function AppInner() {
       showToast('No dataset loaded to export.', 'warning');
       return;
     }
+    if (!isPro && format !== 'csv') {
+      showToast('XLSX and JSON exports require a Pro subscription.', 'error');
+      return;
+    }
     try {
       exportDataset(currentDataset.rows, currentDataset.columns, format, state.projectName);
       showToast(`Dataset exported as ${format.toUpperCase()}!`, 'success');
@@ -92,6 +96,10 @@ function AppInner() {
   };
 
   const handlePDFReport = () => {
+    if (!isPro) {
+      showToast('PDF Reports require a Pro subscription.', 'error');
+      return;
+    }
     if (!currentDataset && state.workflowHistory.length === 0) {
       showToast('Nothing to report yet. Load a dataset first.', 'warning');
       return;
@@ -177,9 +185,9 @@ function AppInner() {
                 <button onClick={() => handleExport('json')} disabled={!currentDataset} className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-medium transition-colors ${currentDataset ? 'text-blue-700 hover:bg-blue-100' : 'text-gray-300 cursor-not-allowed'}`}>
                   <FileJson size={14} /> JSON
                 </button>
-              </div>
+               </div>
 
-              <button onClick={() => setShowCodeModal(true)} title="Export Python Code" className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 text-gray-100 rounded-lg text-xs font-semibold hover:bg-black transition-colors shadow-sm">
+              <button onClick={() => isPro ? setShowCodeModal(true) : showToast('Python Export is a Pro feature.', 'error')} title="Export Python Code" className="flex items-center gap-1.5 px-3 py-2 bg-gray-800 text-gray-100 rounded-lg text-xs font-semibold hover:bg-black transition-colors shadow-sm">
                 <Code size={14} /> <span className="hidden sm:inline">Export Code</span>
               </button>
               <button onClick={handlePDFReport} title="Export PDF Report" className="flex items-center gap-1.5 px-3 py-2 bg-indigo-600 text-white rounded-lg text-xs font-semibold hover:bg-indigo-700 transition-colors shadow-sm">
@@ -190,16 +198,18 @@ function AppInner() {
         </header>
 
         <main className="flex-1 overflow-auto p-4 md:p-6 bg-gray-100 relative">
-          <Suspense fallback={<div className="flex h-64 items-center justify-center"><svg className="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>}>
-            {activeTab === 'upload' && <DataUpload onUploadSuccess={handleUploadSuccess} />}
-            {activeTab === 'explorer' && currentDataset && <DataExplorer dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
-            {activeTab === 'cleaning' && currentDataset && <DataCleaning dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
-            {activeTab === 'transformation' && currentDataset && <DataTransformationPage dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
-            {activeTab === 'analysis' && currentDataset && <ErrorBoundary><DataAnalysis dataset={currentDataset} /></ErrorBoundary>}
-            {activeTab === 'visualization' && currentDataset && <DataVisualization dataset={currentDataset} />}
-            {activeTab === 'advanced' && currentDataset && <AdvancedAnalytics dataset={currentDataset} />}
-            {activeTab === 'ml' && currentDataset && <MLAnalysis dataset={currentDataset} />}
-          </Suspense>
+          <ErrorBoundary>
+            <Suspense fallback={<div className="flex h-64 items-center justify-center"><svg className="animate-spin h-8 w-8 text-blue-500" viewBox="0 0 24 24" fill="none"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg></div>}>
+              {activeTab === 'upload' && <DataUpload onUploadSuccess={handleUploadSuccess} />}
+              {activeTab === 'explorer' && currentDataset && <DataExplorer dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
+              {activeTab === 'cleaning' && currentDataset && <DataCleaning dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
+              {activeTab === 'transformation' && currentDataset && <DataTransformationPage dataset={currentDataset} onDatasetUpdate={handleDatasetUpdate} />}
+              {activeTab === 'analysis' && currentDataset && <DataAnalysis dataset={currentDataset} />}
+              {activeTab === 'visualization' && currentDataset && <DataVisualization dataset={currentDataset} />}
+              {activeTab === 'advanced' && currentDataset && <AdvancedAnalytics dataset={currentDataset} />}
+              {activeTab === 'ml' && currentDataset && <MLAnalysis dataset={currentDataset} />}
+            </Suspense>
+          </ErrorBoundary>
         </main>
         
         <Footer />
