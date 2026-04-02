@@ -3,8 +3,8 @@ import { Mail, Linkedin } from 'lucide-react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-slate-700 text-white py-4 px-8 font-sans mt-auto z-50 rounded-t-lg shadow-lg mx-auto w-full max-w-7xl">
-      <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-sm font-medium">
+    <footer className="bg-panel/40 backdrop-blur-md border-t border-white/5 py-6 px-8 mt-auto z-50">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 text-sm">
         
         {/* Email Link */}
         <a 

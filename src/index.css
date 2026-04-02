@@ -1,3 +1,67 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-background text-gray-300 font-sans antialiased selection:bg-accent-blue/30;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-white tracking-tight font-semibold;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-panel/40 backdrop-blur-xl border border-white/5 rounded-2xl shadow-glow-blue;
+  }
+
+  .nav-item-active {
+    @apply bg-active-gradient text-white shadow-glow-blue translate-x-1;
+  }
+
+  .premium-input {
+    @apply bg-surface-low border border-white/10 rounded-xl px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-accent-blue/50 transition-all placeholder:text-gray-500;
+  }
+
+  .premium-btn {
+    @apply bg-accent-blue hover:bg-accent-blue/80 text-white px-6 py-2.5 rounded-xl font-medium transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .premium-btn-outline {
+    @apply border border-white/10 text-gray-300 hover:bg-white/5 px-6 py-2.5 rounded-xl font-medium transition-all;
+  }
+
+  /* Custom Sidebar Styling */
+  .sidebar-gradient {
+    @apply bg-glow-gradient border-r border-white/5;
+  }
+
+  /* Custom scrollbar to match dark theme */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full hover:bg-white/20;
+  }
+}
+
+.glow-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.08) 0%, transparent 40%);
+  z-index: -1;
+}
