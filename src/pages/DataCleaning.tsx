@@ -74,12 +74,10 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
         }
       });
       
-      // Filter out empty columns
       modifiedColumns = modifiedColumns.filter(
         column => !columnsToRemove.includes(column.name)
       );
       
-      // Remove these columns from all rows
       if (columnsToRemove.length > 0) {
         modifiedRows = modifiedRows.map(row => {
           const newRow = { ...row };
@@ -99,7 +97,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
       const uniqueRows = new Map();
       
       modifiedRows.forEach(row => {
-        // Create a string key from all values
         const key = Object.values(row).join('|');
         uniqueRows.set(key, row);
       });
@@ -139,9 +136,7 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
     // Handle null values
     if (cleaningOptions.removeNulls) {
       modifiedColumns.forEach(column => {
-        // For numeric columns, replace nulls with mean value
         if (column.type === 'number') {
-          // Calculate mean of non-null values
           const values = modifiedRows
             .map(row => row[column.name])
             .filter(val => val !== null && val !== undefined && val !== '');
@@ -149,7 +144,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
           if (values.length > 0) {
             const mean = values.reduce((sum, val) => sum + val, 0) / values.length;
             
-            // Replace nulls with mean
             modifiedRows.forEach(row => {
               if (row[column.name] === null || row[column.name] === undefined || row[column.name] === '') {
                 row[column.name] = mean;
@@ -158,7 +152,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
             });
           }
         } else if (column.type === 'string') {
-          // For string columns, replace nulls with empty string
           modifiedRows.forEach(row => {
             if (row[column.name] === null || row[column.name] === undefined) {
               row[column.name] = '';
@@ -173,7 +166,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
     if (cleaningOptions.removeOutliers) {
       modifiedColumns.forEach(column => {
         if (column.type === 'number') {
-          // Calculate quartiles and IQR
           const values = modifiedRows
             .map(row => row[column.name])
             .filter(val => val !== null && val !== undefined && val !== '');
@@ -190,7 +182,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
             const lowerBound = q1 - 1.5 * iqr;
             const upperBound = q3 + 1.5 * iqr;
             
-            // Replace outliers with boundary values
             modifiedRows.forEach(row => {
               const value = row[column.name];
               if (typeof value === 'number') {
@@ -211,13 +202,11 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
     // Capitalize headers if needed
     if (cleaningOptions.capitalizeHeaders) {
       modifiedColumns = modifiedColumns.map(column => {
-        // Create a capitalized version of the column name
         const capitalizedName = column.name
           .toLowerCase()
           .replace(/(?:^|\s|_|-)\S/g, match => match.toUpperCase())
           .replace(/[_-]/g, ' ');
         
-        // If name has changed, update all rows
         if (capitalizedName !== column.name) {
           modifiedRows.forEach(row => {
             row[capitalizedName] = row[column.name];
@@ -245,7 +234,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
       return;
     }
     
-    // Update the dataset with cleaned data
     const updatedDataset: Dataset = {
       ...dataset,
       rows: cleanedData.rows,
@@ -255,7 +243,6 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
     
     onDatasetUpdate(updatedDataset);
 
-    // Log action to project history
     const activeOptions = Object.entries(cleaningOptions)
       .filter(([, v]) => v)
       .map(([k]) => k);
@@ -279,148 +266,147 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
     setCleanedStats(null);
   };
   
-  // Toggle a cleaning option
   const toggleOption = (option: keyof CleaningOptions) => {
     setCleaningOptions(prev => ({
       ...prev,
       [option]: !prev[option]
     }));
     
-    // If preview was active, update it
     if (previewCleaned) {
       setPreviewCleaned(false);
     }
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 w-full max-w-full">
       <div>
-        <h2 className="text-2xl font-bold text-gray-800">Data Cleaning</h2>
-        <p className="text-gray-600">
-          Select options to clean and prepare your data
+        <h2 className="text-xl sm:text-2xl font-bold text-gray-800">Data Cleaning</h2>
+        <p className="text-xs sm:text-sm text-gray-600">
+          Select options to clean and prepare your dataset records
         </p>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div>
-          <div className="bg-white rounded-lg shadow">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-800">Cleaning Options</h3>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+        {/* Cleaning Options Column */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl shadow-xs border border-gray-200 overflow-hidden">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <h3 className="text-base font-bold text-gray-800">Cleaning Options</h3>
             </div>
             
-            <div className="px-6 py-4 space-y-4">
-              <p className="text-sm text-gray-600">
-                Select the cleaning operations to apply to your dataset:
+            <div className="p-4 sm:p-6 space-y-4">
+              <p className="text-xs text-gray-500">
+                Select the data cleaning operations to apply:
               </p>
               
-              <div className="space-y-3">
-                <label className="flex items-center space-x-3">
+              <div className="space-y-2.5">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.removeNulls}
                     onChange={() => toggleOption('removeNulls')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Fill missing values</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Fill missing values</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.removeOutliers}
                     onChange={() => toggleOption('removeOutliers')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Handle outliers</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Handle outliers (IQR)</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.removeEmptyRows}
                     onChange={() => toggleOption('removeEmptyRows')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Remove empty rows</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Remove empty rows</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.removeEmptyColumns}
                     onChange={() => toggleOption('removeEmptyColumns')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Remove empty columns</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Remove empty columns</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.removeDuplicates}
                     onChange={() => toggleOption('removeDuplicates')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Remove duplicate rows</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Remove duplicate rows</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.trimWhitespace}
                     onChange={() => toggleOption('trimWhitespace')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Trim whitespace</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Trim whitespace</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.fixDataTypes}
                     onChange={() => toggleOption('fixDataTypes')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Fix data types</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Fix data types</span>
                 </label>
                 
-                <label className="flex items-center space-x-3">
+                <label className="flex items-center p-2.5 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition-colors min-h-[44px]">
                   <input
                     type="checkbox"
                     checked={cleaningOptions.capitalizeHeaders}
                     onChange={() => toggleOption('capitalizeHeaders')}
-                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4"
+                    className="rounded text-blue-600 focus:ring-blue-500 h-4 w-4 mr-3"
                   />
-                  <span className="text-gray-700">Clean column names</span>
+                  <span className="text-xs sm:text-sm font-medium text-gray-700">Clean column names</span>
                 </label>
               </div>
               
-              <div className="pt-4 flex space-x-4">
+              <div className="pt-3 flex flex-col sm:flex-row items-stretch gap-2">
                 {!previewCleaned ? (
                   <button
                     onClick={() => setPreviewCleaned(true)}
                     disabled={!Object.values(cleaningOptions).some(Boolean)}
-                    className={`flex items-center px-4 py-2 rounded-md ${
+                    className={`w-full flex items-center justify-center px-4 py-3 rounded-lg text-xs font-semibold shadow-2xs transition-colors min-h-[44px] ${
                       !Object.values(cleaningOptions).some(Boolean)
-                        ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                        ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
                         : 'bg-blue-600 text-white hover:bg-blue-700'
                     }`}
                   >
-                    <Filter size={18} className="mr-2" />
+                    <Filter size={16} className="mr-2" />
                     Preview Changes
                   </button>
                 ) : (
                   <>
                     <button
                       onClick={handleApplyCleaningOptions}
-                      className="flex items-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                      className="flex-1 flex items-center justify-center px-4 py-3 bg-emerald-600 text-white rounded-lg text-xs font-semibold hover:bg-emerald-700 transition min-h-[44px]"
                     >
-                      <Check size={18} className="mr-2" />
-                      Apply Changes
+                      <Check size={16} className="mr-1.5" />
+                      Apply
                     </button>
                     <button
                       onClick={handleReset}
-                      className="flex items-center px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                      className="flex-1 flex items-center justify-center px-4 py-3 bg-gray-200 text-gray-700 rounded-lg text-xs font-semibold hover:bg-gray-300 transition min-h-[44px]"
                     >
                       Cancel
                     </button>
@@ -431,67 +417,67 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
           </div>
           
           {cleanedStats && (
-            <div className="mt-6 bg-white rounded-lg shadow overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 bg-blue-50">
-                <h3 className="text-lg font-medium text-blue-800">Cleaning Summary</h3>
+            <div className="bg-white rounded-xl shadow-xs border border-gray-200 overflow-hidden">
+              <div className="px-4 sm:px-6 py-3.5 border-b border-gray-200 bg-blue-50">
+                <h3 className="text-sm font-bold text-blue-800">Cleaning Summary</h3>
               </div>
-              <div className="px-6 py-4">
-                <ul className="space-y-2 text-sm">
+              <div className="p-4 sm:p-6">
+                <ul className="space-y-2.5 text-xs text-gray-700">
                   {cleanedStats.rowsRemoved > 0 && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Removed {cleanedStats.rowsRemoved} empty rows</span>
                     </li>
                   )}
                   
                   {cleanedStats.columnsRemoved.length > 0 && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>
                         Removed {cleanedStats.columnsRemoved.length} empty columns: 
-                        <span className="font-medium"> {cleanedStats.columnsRemoved.join(', ')}</span>
+                        <span className="font-semibold"> {cleanedStats.columnsRemoved.join(', ')}</span>
                       </span>
                     </li>
                   )}
                   
                   {cleanedStats.nullsFixed > 0 && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Fixed {cleanedStats.nullsFixed} missing values</span>
                     </li>
                   )}
                   
                   {cleanedStats.outlierCount > 0 && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Adjusted {cleanedStats.outlierCount} outliers</span>
                     </li>
                   )}
                   
                   {cleanedStats.duplicatesRemoved > 0 && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Removed {cleanedStats.duplicatesRemoved} duplicate rows</span>
                     </li>
                   )}
                   
                   {cleaningOptions.trimWhitespace && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Trimmed whitespace in string values</span>
                     </li>
                   )}
                   
                   {cleaningOptions.fixDataTypes && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Fixed data types where possible</span>
                     </li>
                   )}
                   
                   {cleaningOptions.capitalizeHeaders && (
                     <li className="flex items-start">
-                      <CheckCircle size={16} className="text-green-500 mr-2 mt-0.5" />
+                      <CheckCircle size={16} className="text-green-500 mr-2 flex-shrink-0 mt-0.5" />
                       <span>Cleaned column names</span>
                     </li>
                   )}
@@ -501,15 +487,16 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
           )}
         </div>
         
-        <div className="lg:col-span-2">
-          <div className="bg-white rounded-lg shadow overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-800">
-                {previewCleaned ? 'Preview of Cleaned Data' : 'Original Data'}
+        {/* Preview Data Column */}
+        <div className="lg:col-span-2 space-y-6 min-w-0">
+          <div className="bg-white rounded-xl shadow-xs border border-gray-200 overflow-hidden">
+            <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50 flex items-center justify-between">
+              <h3 className="text-sm sm:text-base font-bold text-gray-800">
+                {previewCleaned ? 'Preview of Cleaned Dataset' : 'Current Dataset Table'}
               </h3>
             </div>
             
-            <div className="p-4">
+            <div className="p-3 sm:p-4">
               {previewCleaned && cleanedData ? (
                 <DataTable 
                   data={cleanedData.rows} 
@@ -525,27 +512,18 @@ const DataCleaning: React.FC<DataCleaningProps> = ({ dataset, onDatasetUpdate })
           </div>
           
           {!previewCleaned && (
-            <div className="mt-6 bg-white rounded-lg shadow p-6">
-              <div className="flex">
-                <div className="flex-shrink-0">
-                  <WandSparkles size={24} className="text-blue-600" />
+            <div className="bg-white rounded-xl shadow-xs border border-gray-200 p-4 sm:p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-2.5 bg-blue-50 rounded-xl text-blue-600 flex-shrink-0">
+                  <WandSparkles size={22} />
                 </div>
-                <div className="ml-4">
-                  <h4 className="text-lg font-medium text-gray-800">Data Cleaning Tips</h4>
-                  <ul className="mt-2 space-y-2 text-sm text-gray-600">
-                    <li>
-                      <strong>Missing Values:</strong> For numeric columns, missing values will be filled with the mean.
-                      For text columns, they'll be replaced with empty strings.
-                    </li>
-                    <li>
-                      <strong>Outliers:</strong> Values beyond 1.5 × IQR will be capped at the boundaries.
-                    </li>
-                    <li>
-                      <strong>Data Types:</strong> Attempts to convert strings to numbers where possible.
-                    </li>
-                    <li>
-                      <strong>Column Names:</strong> Capitalizes words and replaces underscores with spaces.
-                    </li>
+                <div>
+                  <h4 className="text-sm sm:text-base font-bold text-gray-800">Data Cleaning Guidelines</h4>
+                  <ul className="mt-2 space-y-2 text-xs sm:text-sm text-gray-600">
+                    <li>• <strong>Missing Values:</strong> Replaces missing numbers with the column mean, and text with empty strings.</li>
+                    <li>• <strong>Outliers:</strong> Caps extreme values outside 1.5 × IQR boundary range.</li>
+                    <li>• <strong>Data Types:</strong> Auto-converts string numbers into true numeric values.</li>
+                    <li>• <strong>Column Headers:</strong> Formats headers into title case and cleans underscores.</li>
                   </ul>
                 </div>
               </div>

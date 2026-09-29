@@ -60,33 +60,17 @@ const LoadProjectDropzone: React.FC<LoadProjectDropzoneProps> = ({ onClose }) =>
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        background: 'rgba(0,0,0,0.55)',
-        zIndex: 1000,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-      }}
-    >
-      <div
-        style={{
-          background: '#fff',
-          borderRadius: 16,
-          maxWidth: 480,
-          width: '100%',
-          padding: 28,
-          boxShadow: '0 20px 60px rgba(0,0,0,0.2)',
-        }}
-      >
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-xs p-3 sm:p-4">
+      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
-          <h2 className="text-xl font-bold text-gray-800">Load Project</h2>
-          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
-            <X size={22} />
+          <h2 className="text-xl font-bold text-gray-900">Load Project</h2>
+          <button
+            onClick={onClose}
+            className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Close modal"
+          >
+            <X size={20} />
           </button>
         </div>
 
@@ -95,7 +79,7 @@ const LoadProjectDropzone: React.FC<LoadProjectDropzoneProps> = ({ onClose }) =>
             {/* Drop zone */}
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors ${
+              className={`border-2 border-dashed rounded-xl p-6 sm:p-8 text-center cursor-pointer transition-colors ${
                 isDragActive
                   ? 'border-blue-500 bg-blue-50'
                   : 'border-gray-300 bg-gray-50 hover:border-blue-400 hover:bg-blue-50'
@@ -108,74 +92,68 @@ const LoadProjectDropzone: React.FC<LoadProjectDropzoneProps> = ({ onClose }) =>
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                   </svg>
-                  <p className="text-blue-600 font-medium">Reading project file…</p>
+                  <p className="text-blue-600 text-sm font-medium">Reading project file…</p>
                 </div>
               ) : (
                 <>
-                  <Upload size={40} className="text-blue-400 mx-auto mb-3" />
-                  <p className="text-gray-700 font-medium">Drop your .dip file here</p>
-                  <p className="text-gray-500 text-sm mt-1">or click to browse</p>
-                  <p className="text-xs text-gray-400 mt-3">Only .dip (DataInsight Project) files are accepted</p>
+                  <Upload size={36} className="text-blue-500 mx-auto mb-2" />
+                  <p className="text-gray-800 text-sm font-bold">Drop your .dip file here</p>
+                  <p className="text-gray-500 text-xs mt-1">or tap to browse files</p>
+                  <p className="text-[11px] text-gray-400 mt-3">Only .dip (DataInsight Project) files accepted</p>
                 </>
               )}
             </div>
 
             {/* Error */}
             {fileError && (
-              <div className="mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <div className="mt-4 flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl">
                 <AlertCircle size={18} className="text-red-500 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-700">{fileError}</p>
+                <p className="text-xs text-red-700">{fileError}</p>
               </div>
             )}
           </>
         ) : (
           <>
             {/* Preview */}
-            <div className="mb-5 p-4 bg-green-50 border border-green-200 rounded-xl">
+            <div className="mb-5 p-4 bg-emerald-50 border border-emerald-200 rounded-xl">
               <div className="flex items-center gap-2 mb-3">
-                <CheckCircle size={20} className="text-green-600" />
-                <span className="font-semibold text-green-800">Valid project file detected</span>
+                <CheckCircle size={20} className="text-emerald-600" />
+                <span className="font-bold text-sm text-emerald-900">Valid project file detected</span>
               </div>
-              <dl className="grid grid-cols-2 gap-2 text-sm">
+              <dl className="grid grid-cols-2 gap-2 text-xs">
                 <dt className="text-gray-500">Project Name</dt>
-                <dd className="font-medium text-gray-800">{preview.projectName}</dd>
+                <dd className="font-bold text-gray-800 truncate">{preview.projectName}</dd>
                 <dt className="text-gray-500">Created</dt>
-                <dd className="font-medium text-gray-800">
+                <dd className="font-semibold text-gray-800">
                   {new Date(preview.createdAt).toLocaleDateString()}
                 </dd>
                 <dt className="text-gray-500">Rows</dt>
-                <dd className="font-medium text-gray-800">
+                <dd className="font-semibold text-gray-800">
                   {preview.processedDataset?.rows.length.toLocaleString() ?? '—'}
                 </dd>
                 <dt className="text-gray-500">Columns</dt>
-                <dd className="font-medium text-gray-800">
+                <dd className="font-semibold text-gray-800">
                   {preview.processedDataset?.columns.length ?? '—'}
                 </dd>
-                <dt className="text-gray-500">History Steps</dt>
-                <dd className="font-medium text-gray-800">{preview.history.length}</dd>
-                <dt className="text-gray-500">ML Results</dt>
-                <dd className="font-medium text-gray-800">{preview.mlResults.length}</dd>
-                <dt className="text-gray-500">Saved Charts</dt>
-                <dd className="font-medium text-gray-800">{preview.charts.length}</dd>
               </dl>
             </div>
 
-            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg mb-4">
-              <p className="text-sm text-amber-800">
-                ⚠ Loading this project will <strong>replace your current session</strong>. Make sure you've saved any work first.
+            <div className="p-3 bg-amber-50 border border-amber-200 rounded-xl mb-5">
+              <p className="text-xs text-amber-900 leading-relaxed">
+                ⚠ Restoring will <strong>replace your current workspace session</strong>. Ensure you have saved your work.
               </p>
             </div>
 
             <div className="flex gap-3">
               <button
                 onClick={() => setPreview(null)}
-                className="flex-1 py-2.5 px-4 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                className="flex-1 py-3 px-4 border border-gray-300 rounded-xl text-gray-700 hover:bg-gray-50 transition-colors font-semibold text-xs min-h-[44px]"
               >
                 Cancel
               </button>
               <button
                 onClick={handleConfirmLoad}
-                className="flex-1 py-2.5 px-4 bg-blue-600 rounded-lg text-white font-medium hover:bg-blue-700 transition-colors"
+                className="flex-1 py-3 px-4 bg-blue-600 rounded-xl text-white font-semibold text-xs hover:bg-blue-700 transition-colors shadow-xs min-h-[44px]"
               >
                 Restore Project
               </button>

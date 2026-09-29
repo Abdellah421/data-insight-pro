@@ -11,8 +11,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
-  loading: true,
-  isPro: false,
+  loading: false,
+  isPro: true, // All analysis features free
   logout: async () => {},
 });
 
@@ -20,27 +20,13 @@ export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [isPro, setIsPro] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isPro] = useState(true); // Free access to all export & analysis capabilities
 
   useEffect(() => {
-    // Listen for authentication state changes
-    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    // Listen for background authentication state if optional user auth is used
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
-      
-      if (currentUser) {
-        try {
-          // Standard Stripe+Firebase architecture:
-          // Check for 'stripeRole' custom claim securely injected via Webhook
-          const tokenResult = await currentUser.getIdTokenResult();
-          setIsPro(!!tokenResult.claims.stripeRole);
-        } catch (err) {
-          setIsPro(false);
-        }
-      } else {
-        setIsPro(false);
-      }
-      
       setLoading(false);
     });
 
@@ -57,7 +43,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   return (
     <AuthContext.Provider value={{ user, loading, isPro, logout }}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };
