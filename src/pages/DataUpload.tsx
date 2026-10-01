@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { FileText, Database, Upload, AlertCircle } from 'lucide-react';
+import { FileText, Database, Upload, AlertCircle, FlaskConical } from 'lucide-react';
 import FileUploader from '../components/FileUploader';
 import { Dataset } from '../types';
-import { parseCSV, parseExcel, parseJSON } from '../utils/parsers';
+import { useToast } from '../context/ToastContext';
+import {
+  MAX_UPLOAD_BYTES,
+  friendlyUploadError,
+  processUploadedFile,
+} from '../utils/processUploadedFile';
+import sampleSalesCsv from '../data/sample-sales.csv?raw';
 
 interface DataUploadProps {
   onUploadSuccess: (dataset: Dataset) => void;
 }
 
 const DataUpload: React.FC<DataUploadProps> = ({ onUploadSuccess }) => {
+  const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -19,142 +26,85 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUploadSuccess }) => {
     'application/vnd.ms-excel': ['.xls'],
     'application/json': ['.json'],
   };
-  
+
   const handleFileSelect = (selectedFile: File) => {
     setFile(selectedFile);
     setError(null);
   };
-  
-  const determineFileType = (file: File): 'csv' | 'excel' | 'json' | 'unknown' => {
-    const extension = file.name.split('.').pop()?.toLowerCase();
-    
-    if (extension === 'csv') return 'csv';
-    if (extension === 'xlsx' || extension === 'xls') return 'excel';
-    if (extension === 'json') return 'json';
-    
-    return 'unknown';
-  };
 
-  const handleProcessFile = async () => {
-    if (!file) return;
-    
+  const runPipeline = async (selectedFile: File) => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      const fileType = determineFileType(file);
-      let parsedData: any[] = [];
-      
-      switch (fileType) {
-        case 'csv':
-          parsedData = await parseCSV(file);
-          break;
-        case 'excel':
-          parsedData = await parseExcel(file);
-          break;
-        case 'json':
-          parsedData = await parseJSON(file);
-          break;
-        default:
-          throw new Error('Unsupported file format');
-      }
-      
-      if (parsedData.length === 0) {
-        throw new Error('No data found in the file');
-      }
-      
-      // Get column names and types
-      const firstRow = parsedData[0];
-      const columns = Object.keys(firstRow).map(name => {
-        // Determine column type based on first non-null value
-        let type: 'string' | 'number' | 'date' | 'boolean' | 'unknown' = 'unknown';
-        let nullable = false;
-        
-        for (const row of parsedData) {
-          const value = row[name];
-          
-          if (value === null || value === undefined || value === '') {
-            nullable = true;
-            continue;
-          }
-          
-          if (typeof value === 'number') type = 'number';
-          else if (typeof value === 'string') type = 'string';
-          else if (typeof value === 'boolean') type = 'boolean';
-          else if (value instanceof Date) type = 'date';
-          
-          if (type !== 'unknown') break;
-        }
-        
-        return { name, type, nullable };
-      });
-      
-      // Create dataset
-      const dataset: Dataset = {
-        id: Math.random().toString(36).substr(2, 9),
-        name: file.name.split('.')[0],
-        rows: parsedData,
-        columns,
-        originalFormat: fileType,
-        dateCreated: new Date(),
-        dateModified: new Date(),
-        originalFilename: file.name,
-      };
-      
+      const dataset = await processUploadedFile(selectedFile);
       onUploadSuccess(dataset);
     } catch (err) {
-      console.error('Error processing file:', err);
-      setError(err instanceof Error ? err.message : 'Failed to process file');
+      const message = friendlyUploadError(err);
+      setError(message);
+      showToast(message, 'error');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleProcessFile = async () => {
+    if (!file) return;
+    await runPipeline(file);
+  };
+
+  const handleSampleDataset = async () => {
+    const sampleFile = new File([sampleSalesCsv], 'sample-sales.csv', { type: 'text/csv' });
+    setFile(sampleFile);
+    await runPipeline(sampleFile);
+  };
+
   return (
     <div className="space-y-8">
       <div className="text-center space-y-3 max-w-2xl mx-auto">
-        <h2 className="text-2xl font-bold text-gray-800">Upload Your Data</h2>
+        <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Analyze your data in seconds</h2>
         <p className="text-gray-600">
-          Upload a data file to start analyzing. Support for CSV, Excel, and JSON formats.
+          Upload a CSV, Excel or JSON file to get started.
         </p>
       </div>
-      
+
       <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-6">
         <div className="space-y-6">
           <FileUploader
             onFileSelect={handleFileSelect}
             acceptedFileTypes={acceptedFileTypes}
+            maxSize={MAX_UPLOAD_BYTES}
           />
-          
+
           {file && (
             <div className="flex items-center p-4 bg-blue-50 rounded-lg">
-              <FileText size={24} className="text-blue-600 mr-4" />
-              <div className="flex-1">
-                <p className="font-medium">{file.name}</p>
+              <FileText size={24} className="text-blue-600 mr-4 flex-shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="font-medium truncate">{file.name}</p>
                 <p className="text-sm text-gray-600">
                   {(file.size / 1024).toFixed(2)} KB
                 </p>
               </div>
               <button
                 onClick={() => setFile(null)}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-gray-500 hover:text-gray-700 text-sm font-medium"
               >
                 Remove
               </button>
             </div>
           )}
-          
+
           {error && (
             <div className="flex items-center p-4 bg-red-50 text-red-700 rounded-lg">
               <AlertCircle size={20} className="mr-2 flex-shrink-0" />
               <p>{error}</p>
             </div>
           )}
-          
+
           <button
             onClick={handleProcessFile}
             disabled={!file || loading}
-            className={`w-full flex items-center justify-center py-3 px-4 rounded-lg font-medium transition-colors ${
+            className={`w-full flex items-center justify-center py-3 px-4 rounded-lg font-medium transition-colors min-h-[44px] ${
               !file || loading
                 ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-blue-600 hover:bg-blue-700 text-white'
@@ -171,16 +121,35 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUploadSuccess }) => {
             ) : (
               <>
                 <Upload size={20} className="mr-2" />
-                Process File
+                Upload Data
               </>
             )}
           </button>
+
+          <div className="flex items-center gap-3">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs font-medium uppercase tracking-wide text-gray-400">or</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          <button
+            type="button"
+            onClick={handleSampleDataset}
+            disabled={loading}
+            className="w-full flex items-center justify-center py-3 px-4 rounded-lg font-medium border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 transition-colors min-h-[44px] disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            <FlaskConical size={20} className="mr-2 text-blue-600" />
+            Try Sample Dataset
+          </button>
+          <p className="text-center text-xs text-gray-500">
+            Loads a small fictional sales dataset through the same analysis pipeline.
+          </p>
         </div>
       </div>
-      
+
       <div className="max-w-4xl mx-auto">
         <h3 className="text-lg font-medium text-gray-800 mb-4">File Format Guidelines</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="bg-white p-5 rounded-lg shadow-sm">
             <div className="flex items-center mb-3">
@@ -195,7 +164,7 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUploadSuccess }) => {
               <li>• UTF-8 encoding recommended</li>
             </ul>
           </div>
-          
+
           <div className="bg-white p-5 rounded-lg shadow-sm">
             <div className="flex items-center mb-3">
               <div className="p-2 bg-green-100 rounded-full text-green-600 mr-3">
@@ -209,7 +178,7 @@ const DataUpload: React.FC<DataUploadProps> = ({ onUploadSuccess }) => {
               <li>• .xlsx and .xls formats supported</li>
             </ul>
           </div>
-          
+
           <div className="bg-white p-5 rounded-lg shadow-sm">
             <div className="flex items-center mb-3">
               <div className="p-2 bg-amber-100 rounded-full text-amber-600 mr-3">

@@ -2,7 +2,6 @@ import Papa from 'papaparse';
 import * as XLSX from 'xlsx';
 import { saveAs } from 'file-saver';
 import { DIPProject, ProjectState } from '../types';
-import { generateProfessionalPDFReport } from './pdfGenerator';
 
 // ── Dataset Export ────────────────────────────────────────────────────────────
 
@@ -99,9 +98,10 @@ export function loadProjectFromFile(file: File): Promise<any> {
  * Generate an executive, client-facing PDF data analysis report automatically
  * computed from dataset statistics, quality checks, correlations, ML results, and AI insights.
  */
-export function generatePDFReport(
+export async function generatePDFReport(
   state: ProjectState,
   chartImageBase64?: string | null
-): void {
+): Promise<void> {
+  const { generateProfessionalPDFReport } = await import('./pdfGenerator');
   generateProfessionalPDFReport(state, chartImageBase64);
 }

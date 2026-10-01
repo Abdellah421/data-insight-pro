@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FileUp, File, FileWarning } from 'lucide-react';
+import { MAX_UPLOAD_BYTES, friendlyUploadError } from '../utils/processUploadedFile';
 
 interface FileUploaderProps {
   onFileSelect: (file: File) => void;
@@ -11,7 +12,7 @@ interface FileUploaderProps {
 const FileUploader: React.FC<FileUploaderProps> = ({ 
   onFileSelect, 
   acceptedFileTypes, 
-  maxSize = 10 * 1024 * 1024 // 10MB default
+  maxSize = MAX_UPLOAD_BYTES
 }) => {
   const [error, setError] = useState<string | null>(null);
   
@@ -39,12 +40,13 @@ const FileUploader: React.FC<FileUploaderProps> = ({
   React.useEffect(() => {
     if (fileRejections.length > 0) {
       const rejection = fileRejections[0];
-      if (rejection.errors[0].code === 'file-too-large') {
-        setError(`File is too large. Max size is ${maxSize / (1024 * 1024)}MB`);
-      } else if (rejection.errors[0].code === 'file-invalid-type') {
-        setError('Invalid file type. Please upload a CSV, Excel, or JSON file');
+      const code = rejection.errors[0]?.code;
+      if (code === 'file-too-large') {
+        setError(friendlyUploadError(new Error('FILE_TOO_LARGE')));
+      } else if (code === 'file-invalid-type') {
+        setError(friendlyUploadError(new Error('UNSUPPORTED_FORMAT')));
       } else {
-        setError(rejection.errors[0].message);
+        setError("We couldn't read this file. Please check that it is a valid CSV, Excel or JSON file.");
       }
     }
   }, [fileRejections, maxSize]);

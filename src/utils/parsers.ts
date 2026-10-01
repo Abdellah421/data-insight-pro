@@ -1,5 +1,4 @@
 import Papa from 'papaparse';
-import * as XLSX from 'xlsx';
 
 /**
  * Parse CSV file into array of objects with cross-browser Web Worker fallback for Edge/Safari
@@ -14,7 +13,7 @@ export const parseCSV = (file: File): Promise<any[]> => {
       worker: true,
       complete: (results) => {
         if (results.errors && results.errors.length > 0 && (!results.data || results.data.length === 0)) {
-          reject(new Error(`CSV parsing error: ${results.errors[0].message}`));
+          reject(new Error('INVALID_CSV'));
         } else {
           resolve(results.data);
         }
@@ -28,13 +27,13 @@ export const parseCSV = (file: File): Promise<any[]> => {
           worker: false,
           complete: (syncResults) => {
             if (syncResults.errors && syncResults.errors.length > 0 && (!syncResults.data || syncResults.data.length === 0)) {
-              reject(new Error(`CSV parsing error: ${syncResults.errors[0].message}`));
+              reject(new Error('INVALID_CSV'));
             } else {
               resolve(syncResults.data);
             }
           },
-          error: (syncErr) => {
-            reject(syncErr);
+          error: () => {
+            reject(new Error('INVALID_CSV'));
           },
         });
       },
@@ -47,12 +46,13 @@ export const parseCSV = (file: File): Promise<any[]> => {
  */
 export const parseExcel = async (file: File): Promise<any[]> => {
   try {
+    const XLSX = await import('xlsx');
     const data = await file.arrayBuffer();
     // Explicitly set type: 'array' so SheetJS accurately parses ArrayBuffer across all browsers
     const workbook = XLSX.read(data, { type: 'array' });
 
     if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      throw new Error('Excel file contains no readable sheets');
+      throw new Error('EMPTY_FILE');
     }
 
     const firstSheetName = workbook.SheetNames[0];
@@ -61,7 +61,10 @@ export const parseExcel = async (file: File): Promise<any[]> => {
 
     return jsonData;
   } catch (error) {
-    throw new Error(`Excel parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    if (error instanceof Error && error.message === 'EMPTY_FILE') {
+      throw error;
+    }
+    throw new Error('INVALID_EXCEL');
   }
 };
 
@@ -74,11 +77,14 @@ export const parseJSON = async (file: File): Promise<any[]> => {
     const data = JSON.parse(text);
 
     if (!Array.isArray(data)) {
-      throw new Error('JSON file must contain an array of objects');
+      throw new Error('INVALID_JSON_SHAPE');
     }
 
     return data;
   } catch (error) {
-    throw new Error(`JSON parsing error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    if (error instanceof Error && error.message === 'INVALID_JSON_SHAPE') {
+      throw error;
+    }
+    throw new Error('INVALID_JSON');
   }
 };
