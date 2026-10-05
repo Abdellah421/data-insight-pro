@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import LandingPage from './pages/LandingPage';
 import ToolPage from './pages/ToolPage';
 import { PricingPage, AboutPage, ContactPage, PrivacyPage, TermsPage } from './pages/StaticPages';
+import { GuidesIndex, GuideArticle } from './pages/Guides';
 import { ProjectProvider } from './context/ProjectContext';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
@@ -38,6 +39,8 @@ function App() {
               />
               <Route path="/tools/:toolId" element={<ToolPage />} />
               <Route path="/pricing" element={<PricingPage />} />
+              <Route path="/guides" element={<GuidesIndex />} />
+              <Route path="/guides/:slug" element={<GuideArticle />} />
               <Route path="/about" element={<AboutPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="/privacy" element={<PrivacyPage />} />
