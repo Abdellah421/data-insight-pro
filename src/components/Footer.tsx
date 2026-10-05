@@ -41,6 +41,7 @@ const Footer: React.FC = () => {
         <div>
           <h4 className="text-xs font-bold uppercase tracking-wider text-slate-200 mb-3">Platform</h4>
           <ul className="space-y-2 text-xs">
+            <li><Link to="/guides" className="hover:text-white transition">Guides & Tutorials</Link></li>
             <li><Link to="/pricing" className="hover:text-white transition">Pricing</Link></li>
             <li><Link to="/about" className="hover:text-white transition">About Us</Link></li>
             <li><Link to="/contact" className="hover:text-white transition">Contact Support</Link></li>
