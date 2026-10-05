@@ -1,0 +1,3 @@
+# Replace ca-pub-XXXXXXXXXXXXXXXX with your AdSense publisher ID, then redeploy.
+# Get it from https://www.google.com/adsense/ after approval.
+google.com, ca-pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0
