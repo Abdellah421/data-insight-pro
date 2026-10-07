@@ -1,4 +1,4 @@
-const fallbackSiteUrl = 'https://datainsightpro.com';
+const fallbackSiteUrl = 'https://data-insight-pro-inky.vercel.app';
 
 export const SITE_URL = String(import.meta.env.VITE_SITE_URL || fallbackSiteUrl).replace(/\/$/, '');
 export const SITE_NAME = 'DataInsight Pro';
