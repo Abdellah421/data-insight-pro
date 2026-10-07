@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://datainsightpro.com/sitemap.xml
+Sitemap: https://data-insight-pro-inky.vercel.app/sitemap.xml
