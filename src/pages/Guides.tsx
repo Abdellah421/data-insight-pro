@@ -33,6 +33,34 @@ const GUIDES: GuideMeta[] = [
       'The honest breakdown of when a simple CSV beats a full Excel workbook — and when it does not.',
     readTime: '4 min read',
   },
+  {
+    slug: 'clean-data-online',
+    title: 'How to Clean Messy Data Online for Free (No Signup)',
+    description:
+      'Duplicate rows, missing values, inconsistent labels — fix the most common data quality problems in minutes, right in your browser.',
+    readTime: '5 min read',
+  },
+  {
+    slug: 'remove-duplicates',
+    title: 'How to Remove Duplicates from a CSV or Excel File Online',
+    description:
+      'Double-counted orders and repeated customers skew every total. Find and remove duplicate rows fast — free, no signup.',
+    readTime: '3 min read',
+  },
+  {
+    slug: 'correlation-analysis',
+    title: 'Correlation Analysis Online: Find Hidden Relationships in Your Data',
+    description:
+      'Does ad spend drive sales? Learn how to run correlation analysis in your browser and read the results like an analyst.',
+    readTime: '5 min read',
+  },
+  {
+    slug: 'pivot-table-online',
+    title: 'How to Make a Pivot Table Online Without Excel',
+    description:
+      'Summarize thousands of rows into clean totals by category — no Excel, no formulas. Build pivot tables free in your browser.',
+    readTime: '4 min read',
+  },
 ];
 
 function Cta() {
@@ -240,6 +268,167 @@ function CsvVsExcelGuide() {
   );
 }
 
+function CleanDataGuide() {
+  const guide = GUIDES[3];
+  return (
+    <ArticleShell guide={guide}>
+      <p>
+        Every dataset is dirty. Exports come with blank cells, double-counted rows, and the same
+        country written three different ways. Analyzing messy data gives you wrong answers with
+        total confidence — so here is how to clean it first, free, without installing anything.
+      </p>
+      <H2>The 5-minute cleaning checklist</H2>
+      <STEPS
+        steps={[
+          { t: 'Upload your file', d: 'Drop your CSV or Excel file into the free DataInsight Pro workspace. The automatic profile flags missing values, duplicates, and suspicious outliers for you.' },
+          { t: 'Remove duplicate rows', d: 'One click drops exact duplicates. For fuzzy ones (same customer, slightly different spelling), sort and eyeball the top offenders.' },
+          { t: 'Handle missing values', d: 'Fill blanks with the column average or median for numbers, the most common value for categories — or drop rows that are mostly empty.' },
+          { t: 'Standardize labels', d: 'Merge variants like "USA", "U.S.A.", and "United States" into one consistent value so your charts and totals are correct.' },
+          { t: 'Check numbers are numbers', d: 'Values stored as text ("1,200" with a comma, or "$50") will not sum or average. Convert them before you analyze.' },
+        ]}
+      />
+      <H2>Signs your data needs cleaning</H2>
+      <UL
+        items={[
+          'Totals that do not match what you expect — usually duplicates or text-as-numbers.',
+          'Charts with a mysterious blank category — that is missing values showing up.',
+          'The same thing appearing as multiple categories — inconsistent labels splitting your data.',
+          'Averages that feel wrong — often one extreme outlier pulling the mean.',
+        ]}
+      />
+      <H2>How clean is clean enough?</H2>
+      <p>
+        You do not need perfection — you need the errors small enough not to change your
+        conclusions. Clean the columns you actually analyze and report on; ignore cosmetic
+        quirks in columns nobody reads. When in doubt, document what you changed so anyone
+        can reproduce your work.
+      </p>
+      <p>
+        Dealing with repeats specifically? See <Link to="/guides/remove-duplicates" className="text-blue-600 hover:underline">how to remove duplicates from a CSV or Excel file</Link>.
+      </p>
+    </ArticleShell>
+  );
+}
+
+function RemoveDuplicatesGuide() {
+  const guide = GUIDES[4];
+  return (
+    <ArticleShell guide={guide}>
+      <p>
+        Duplicate rows are the silent killers of good analysis. The same order imported twice
+        inflates revenue; the same customer counted twice skews every segment. Here is how to
+        find and remove them in under a minute.
+      </p>
+      <H2>Remove duplicates in 3 steps</H2>
+      <STEPS
+        steps={[
+          { t: 'Upload your CSV or Excel file', d: 'Drop it into the free DataInsight Pro workspace — your file stays on your computer, nothing is uploaded to a server.' },
+          { t: 'Run duplicate detection', d: 'The data cleaner scans every row and flags exact duplicates instantly, showing you how many it found before changing anything.' },
+          { t: 'Remove and verify', d: 'Drop the duplicates with one click, then check your row count and totals to confirm the numbers now make sense.' },
+        ]}
+      />
+      <H2>Exact vs. near duplicates</H2>
+      <UL
+        items={[
+          'Exact duplicates — every cell identical. Safe to remove automatically; they add zero information.',
+          'Near duplicates — same customer as "Jon Smith" and "John Smith". These need a human eye: sort by the suspicious column and merge carefully.',
+          'False duplicates — two genuinely separate orders that happen to look alike. Never dedupe on a single column; use the full row or a unique ID.',
+        ]}
+      />
+      <H2>Prevent them next time</H2>
+      <p>
+        Most duplicates come from importing the same export twice or merging files with
+        overlapping date ranges. Keep a simple log of what you imported and when — and always
+        dedupe right after combining files, before any analysis.
+      </p>
+      <p>
+        Cleaning a whole messy dataset? Read the full <Link to="/guides/clean-data-online" className="text-blue-600 hover:underline">guide to cleaning data online</Link>.
+      </p>
+    </ArticleShell>
+  );
+}
+
+function CorrelationGuide() {
+  const guide = GUIDES[5];
+  return (
+    <ArticleShell guide={guide}>
+      <p>
+        Does more ad spend really bring more sales? Do long support tickets predict cancellations?
+        Correlation analysis answers exactly these questions — measuring how strongly two things
+        move together, on a scale from -1 to +1. No statistics degree required.
+      </p>
+      <H2>Run it in 3 steps</H2>
+      <STEPS
+        steps={[
+          { t: 'Upload your data', d: 'Drop your CSV or Excel file into the free DataInsight Pro workspace.' },
+          { t: 'Open the correlation view', d: 'Pick the numeric columns you want to compare. The tool computes every pair at once and draws a color-coded heatmap.' },
+          { t: 'Read the heatmap', d: 'Dark red or blue squares are strong relationships; pale squares are noise. Click any cell to see the exact correlation number.' },
+        ]}
+      />
+      <H2>How to read the number</H2>
+      <UL
+        items={[
+          '+0.7 to +1.0 — strong positive: when one goes up, the other reliably goes up too.',
+          '-0.7 to -1.0 — strong negative: when one goes up, the other reliably goes down.',
+          '-0.3 to +0.3 — weak or no real relationship; do not base decisions on it.',
+          'Correlation is not causation — ice cream sales and drownings correlate because of summer, not because of each other.',
+        ]}
+      />
+      <H2>What to do with a strong correlation</H2>
+      <p>
+        A strong correlation is a lead, not a verdict. Use it to decide what to investigate
+        next: run a controlled comparison, check the trend over time, or segment the data to
+        see if the relationship holds for every group. The heatmap tells you where to look —
+        your judgment decides what it means.
+      </p>
+      <p>
+        Want to slice the numbers first? Learn <Link to="/guides/pivot-table-online" className="text-blue-600 hover:underline">how to make a pivot table online</Link>.
+      </p>
+    </ArticleShell>
+  );
+}
+
+function PivotTableGuide() {
+  const guide = GUIDES[6];
+  return (
+    <ArticleShell guide={guide}>
+      <p>
+        You have 20,000 rows of sales and someone asks "revenue by region and quarter?" — a pivot
+        table answers in seconds what would take an afternoon of manual formulas. Here is how to
+        build one online, without Excel.
+      </p>
+      <H2>Build a pivot table in 4 steps</H2>
+      <STEPS
+        steps={[
+          { t: 'Upload your spreadsheet', d: 'Drop your CSV or Excel file into the free DataInsight Pro workspace.' },
+          { t: 'Choose your rows', d: 'Pick the category to group by — region, product, salesperson, month.' },
+          { t: 'Choose your values', d: 'Pick the number to summarize and how: sum for revenue, average for ratings, count for orders.' },
+          { t: 'Read the summary', d: 'You get a clean compact table: one row per group, totals at the bottom. Export it or turn it into a chart.' },
+        ]}
+      />
+      <H2>Pivot tables answer questions like</H2>
+      <UL
+        items={[
+          'Total sales per product per quarter — the classic management report.',
+          'Average response time per support agent — spot your stars and bottlenecks.',
+          'Order count per customer segment — see exactly where volume comes from.',
+          'Any "break this big number down by that category" question your boss asks.',
+        ]}
+      />
+      <H2>Tips for good pivots</H2>
+      <p>
+        Clean your category labels first — "North" and "north " will split into two rows and
+        silently halve your totals. And remember: a pivot summarizes, it does not explain.
+        When a number surprises you, drill into that group and look at the underlying rows
+        before drawing conclusions.
+      </p>
+      <p>
+        Summarized? Now find what drives the numbers with <Link to="/guides/correlation-analysis" className="text-blue-600 hover:underline">correlation analysis</Link>.
+      </p>
+    </ArticleShell>
+  );
+}
+
 export function GuidesIndex() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-gray-900">
@@ -285,5 +474,9 @@ export function GuideArticle() {
   if (slug === 'analyze-csv-online') return <CsvGuide />;
   if (slug === 'excel-charts') return <ExcelChartsGuide />;
   if (slug === 'csv-vs-excel') return <CsvVsExcelGuide />;
+  if (slug === 'clean-data-online') return <CleanDataGuide />;
+  if (slug === 'remove-duplicates') return <RemoveDuplicatesGuide />;
+  if (slug === 'correlation-analysis') return <CorrelationGuide />;
+  if (slug === 'pivot-table-online') return <PivotTableGuide />;
   return <Navigate to="/guides" replace />;
 }
