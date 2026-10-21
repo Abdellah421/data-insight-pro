@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { CONSENT_EVENT, getConsent } from './CookieConsent';
 
 interface AdSlotProps {
   slotId: string;
@@ -40,9 +41,18 @@ function ensureAdSenseScript() {
  */
 export const AdSlot: React.FC<AdSlotProps> = ({ slotId, className = '' }) => {
   const pushedRef = useRef(false);
+  // GDPR: advertising scripts may only load after the visitor accepted cookies
+  // (cookie-consent banner stores the choice under localStorage key `dip-consent`).
+  const [consented, setConsented] = useState(() => getConsent() === 'accepted');
 
   useEffect(() => {
-    if (!PUBLISHER_ID || pushedRef.current) return;
+    const onConsent = () => setConsented(getConsent() === 'accepted');
+    window.addEventListener(CONSENT_EVENT, onConsent);
+    return () => window.removeEventListener(CONSENT_EVENT, onConsent);
+  }, []);
+
+  useEffect(() => {
+    if (!PUBLISHER_ID || !consented || pushedRef.current) return;
     pushedRef.current = true;
     ensureAdSenseScript();
     const t = window.setTimeout(() => {
@@ -53,10 +63,10 @@ export const AdSlot: React.FC<AdSlotProps> = ({ slotId, className = '' }) => {
       }
     }, 300);
     return () => window.clearTimeout(t);
-  }, [slotId]);
+  }, [slotId, consented]);
 
-  // No publisher ID yet -> render nothing (site works exactly as before)
-  if (!PUBLISHER_ID) return null;
+  // No publisher ID yet, or no cookie consent yet -> render nothing
+  if (!PUBLISHER_ID || !consented) return null;
 
   return (
     <div className={`my-6 flex w-full justify-center ${className}`}>

@@ -92,6 +92,10 @@ export const AboutPage: React.FC = () => (
           <p>
             DataInsight Pro takes a different approach: <strong>100% In-Browser Execution</strong>. All file parsing (CSV via Web Workers, Excel via SheetJS, JSON natively), cleaning, statistical computations, and chart rendering happen locally in your web browser memory.
           </p>
+          <h2 className="text-xl font-bold text-gray-900 pt-4">Who Runs DataInsight Pro</h2>
+          <p>
+            DataInsight Pro is built and maintained by <strong>Abdellah Benkhalouq</strong>, a data engineering graduate based in Morocco. He created DataInsight Pro to make everyday data analysis — cleaning, exploring, and visualizing CSV and Excel files — accessible to anyone with a web browser, without expensive software or giving up ownership of their data.
+          </p>
           <h2 className="text-xl font-bold text-gray-900 pt-4">Core Principles</h2>
           <ul className="list-disc pl-5 space-y-2">
             <li><strong>No Barrier Access:</strong> Zero forced signups, mandatory emails, or paywalls.</li>
@@ -111,7 +115,15 @@ export const ContactPage: React.FC = () => (
     <main className="flex-1 py-16">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         <h1 className="text-4xl font-extrabold text-gray-900 mb-4 text-center">Contact Us</h1>
-        <p className="text-gray-600 text-center mb-10">Have feedback, suggestions, or technical questions about DataInsight Pro?</p>
+        <p className="text-gray-600 text-center mb-4">Have feedback, suggestions, or technical questions about DataInsight Pro?</p>
+        <p className="text-center mb-10">
+          <a
+            href="mailto:benkhalouqabdellah@gmail.com"
+            className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-800 hover:underline"
+          >
+            <Mail className="w-5 h-5" /> benkhalouqabdellah@gmail.com
+          </a>
+        </p>
 
         <div className="bg-white p-8 rounded-2xl border border-gray-200 shadow-sm space-y-6">
           <div>
@@ -161,6 +173,14 @@ export const PrivacyPage: React.FC = () => (
 
           <h2 className="text-lg font-bold text-gray-900">3. Analytics</h2>
           <p>We may track basic anonymous usage metrics (such as page views and button clicks) to improve user experience. Raw dataset contents, column names, and row values are NEVER sent as analytics data.</p>
+
+          <h2 className="text-lg font-bold text-gray-900">4. Advertising and Cookies</h2>
+          <p>
+            DataInsight Pro plans to display ads served by Google AdSense. Google uses cookies to serve ads based on your prior visits to this and other websites. Google's use of advertising cookies enables it and its partners to serve ads based on your visit to our site and other sites on the Internet. You may opt out of personalized advertising by visiting Google's Ads Settings (<a href="https://www.google.com/settings/ads" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">https://www.google.com/settings/ads</a>). Alternatively, you can opt out of some third-party vendors' uses of cookies for personalized advertising by visiting <a href="https://www.aboutads.info/choices/" className="text-blue-600 hover:underline" target="_blank" rel="noopener noreferrer">https://www.aboutads.info/choices/</a>.
+          </p>
+          <p>
+            Your dataset files are never used for advertising purposes: all data processing happens locally in your browser and is never transmitted to us or to any advertising partner.
+          </p>
         </div>
       </div>
     </main>

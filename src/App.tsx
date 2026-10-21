@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import ToolPage from './pages/ToolPage';
 import { PricingPage, AboutPage, ContactPage, PrivacyPage, TermsPage } from './pages/StaticPages';
 import { GuidesIndex, GuideArticle } from './pages/Guides';
+import CookieConsent from './components/CookieConsent';
 import { ProjectProvider } from './context/ProjectContext';
 import { ToastProvider } from './context/ToastContext';
 import { AuthProvider } from './context/AuthContext';
@@ -47,6 +48,7 @@ function App() {
               <Route path="/terms" element={<TermsPage />} />
               <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <CookieConsent />
           </BrowserRouter>
         </ProjectProvider>
       </ToastProvider>

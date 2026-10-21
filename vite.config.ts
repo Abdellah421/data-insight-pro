@@ -12,5 +12,5 @@ export default defineConfig({
     target: 'es2020',
     sourcemap: false
   },
-  base: './',
+  base: '/',
 });
